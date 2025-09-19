@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-start-kit",
-    "slug": "expo-start-kit",
+    "name": "link-dropper-app",
+    "slug": "link-dropper-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
