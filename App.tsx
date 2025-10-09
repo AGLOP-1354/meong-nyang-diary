@@ -4,9 +4,11 @@ import { StyleSheet } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+
 import { RootNavigator } from '@/navigation/RootNavigator'
 import { useTheme } from '@/hooks/useTheme'
 import { kakaoAuth } from '@/services/kakaoAuth'
+import { googleAuth } from '@/services/googleAuth'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,6 +25,7 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     kakaoAuth.initialize()
+    googleAuth.initialize()
   }, [])
 
   return (
