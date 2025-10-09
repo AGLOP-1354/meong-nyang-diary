@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { UserType } from '@/types/user'
 import { getThemeByScheme } from '@/constants/theme'
 import { kakaoAuth } from '@/services/kakaoAuth'
+import { googleAuth } from '@/services/googleAuth'
 
 import { createStyles } from './styles'
 
@@ -60,6 +61,42 @@ const AuthScreen: React.FC = () => {
     }
   }
 
+  const handleGoogleLogin = async () => {
+    if (!login) {
+      Alert.alert('오류', '로그인 핸들러가 초기화되지 않았습니다.')
+      return
+    }
+
+    if (isLoading) return
+
+    setIsLoading(true)
+    try {
+      const res = await googleAuth.login()
+
+      if (res.success && res.user) {
+        const u: UserType = {
+          id: parseInt(res.user.id, 10) || Date.now(),
+          uuid: `google-${res.user.id}`,
+          name: res.user.name || 'Google 사용자',
+          email: res.user.email || '',
+          profileImage: res.user.profileImageUrl || '',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          lastLoginAt: new Date(),
+          version: 1,
+          googleId: res.user.id,
+        }
+        login(u)
+      } else {
+        Alert.alert('Google 로그인 실패', !res.success ? res.error : '알 수 없는 오류가 발생했습니다.')
+      }
+    } catch (error) {
+      Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -95,18 +132,27 @@ const AuthScreen: React.FC = () => {
               <Text style={styles.socialButtonText}>{isLoading ? '로그인 중...' : '카카오로 계속하기'}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.socialButton, styles.googleButton]}
-              onPress={() => Alert.alert('Google', '준비 중입니다.')}
+              style={[styles.socialButton, styles.googleButton, isLoading && styles.socialButtonDisabled]}
+              onPress={handleGoogleLogin}
+              disabled={isLoading}
             >
-              <GoogleIcon width={20} height={20} style={styles.iconLeft} />
-              <Text style={styles.socialButtonText}>Google로 계속하기</Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#000" style={styles.iconLeft} />
+              ) : (
+                <GoogleIcon width={20} height={20} style={styles.iconLeft} />
+              )}
+              <Text style={styles.socialButtonText}>{isLoading ? '로그인 중...' : 'Google로 계속하기'}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.socialButton, styles.appleButton]}
               onPress={() => Alert.alert('Apple', '준비 중입니다.')}
             >
-              <AppleIcon width={20} height={20} style={styles.iconLeft} />
-              <Text style={styles.socialButtonText}>Apple로 계속하기</Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#000" style={styles.iconLeft} />
+              ) : (
+                <AppleIcon width={20} height={20} style={styles.iconLeft} />
+              )}
+              <Text style={styles.socialButtonText}>{isLoading ? '로그인 중...' : 'Apple로 계속하기'}</Text>
             </TouchableOpacity>
           </View>
 
