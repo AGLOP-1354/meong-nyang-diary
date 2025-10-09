@@ -1,21 +1,21 @@
 {
   "expo": {
-    "name": "link-dropper-app",
-    "slug": "link-dropper-app",
+    "name": "Link Dropper",
+    "slug": "link-dropper",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.exprostartkit"
+      "bundleIdentifier": "com.linkdropper.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.yourcompany.exprostartkit"
+      "package": "com.linkdropper.app"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -34,17 +34,39 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/splash-icon.png",
+          "image": "./assets/logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "@react-native-kakao/core",
+        {
+          "nativeAppKey": "94df8e291872cce816afc78a1857c510",
+          "android": {
+            "authCodeHandlerActivity": true
+          },
+          "ios": {
+            "handleKakaoOpenUrl": true
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraMavenRepos": ["https://devrepo.kakao.com/nexus/content/groups/public/"]
+          }
         }
       ]
     ],
     "extra": {
       "eas": {
         "projectId": "your-project-id-here"
-      }
+      },
+      "kakaoNativeAppKey": "94df8e291872cce816afc78a1857c510",
+      "kakaoRestApiKey": "d59debb427d6854d32a757a690cf842c"
     }
   }
 }

@@ -29,6 +29,9 @@ module.exports = {
       typescript: {
         project: ['./tsconfig.json'],
       },
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.svg'],
+      },
     },
   },
   ignorePatterns: ['node_modules/', '.expo/', 'dist/', 'build/', 'eslint.config.js', 'jest.config.js', 'jest.setup.ts'],
@@ -37,6 +40,8 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-empty-object-type': 'off',
+    '@typescript-eslint/no-wrapper-object-types': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'react/display-name': 'off',
@@ -53,4 +58,12 @@ module.exports = {
     'object-shorthand': 'error',
     'prefer-template': 'error',
   },
+  overrides: [
+    {
+      files: ['**/*.svg'],
+      rules: {
+        'import/no-unresolved': 'off',
+      },
+    },
+  ],
 }
