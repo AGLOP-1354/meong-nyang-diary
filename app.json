@@ -15,7 +15,8 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.linkdropper.app"
+      "bundleIdentifier": "com.linkdropper.app",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -65,7 +66,8 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.628998903521-uta5j62hjkbqe2auc6j1rq0sot45a76g"
         }
-      ]
+      ],
+      "expo-apple-authentication"
     ],
     "extra": {
       "eas": {
