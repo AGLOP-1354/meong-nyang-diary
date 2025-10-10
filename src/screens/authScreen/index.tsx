@@ -8,6 +8,7 @@ import { UserType } from '@/types/user'
 import { getThemeByScheme } from '@/constants/theme'
 import { kakaoAuth } from '@/services/kakaoAuth'
 import { googleAuth } from '@/services/googleAuth'
+import { appleAuth } from '@/services/appleAuth'
 
 import { createStyles } from './styles'
 
@@ -97,17 +98,52 @@ const AuthScreen: React.FC = () => {
     }
   }
 
+  const handleAppleLogin = async () => {
+    if (!login) {
+      Alert.alert('오류', '로그인 핸들러가 초기화되지 않았습니다.')
+      return
+    }
+
+    if (isLoading) return
+
+    const available = await appleAuth.isAvailable()
+    if (!available) {
+      Alert.alert('Apple 로그인', 'Apple 로그인은 실제 iOS 기기에서만 사용 가능합니다.')
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const res = await appleAuth.login()
+
+      if (res.success && res.user) {
+        const u: UserType = {
+          id: parseInt(res.user.id, 10) || Date.now(),
+          uuid: `apple-${res.user.id}`,
+          name: res.user.name || 'Apple 사용자',
+          email: res.user.email || '',
+          profileImage: '',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          lastLoginAt: new Date(),
+          version: 1,
+          appleId: res.user.id,
+        }
+        login(u)
+      } else {
+        Alert.alert('Apple 로그인 실패', !res.success ? res.error : '알 수 없는 오류가 발생했습니다.')
+      }
+    } catch (error) {
+      Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>로그인</Text>
-        <TouchableOpacity
-          accessibilityLabel="닫기"
-          style={styles.closeButton}
-          onPress={() => Alert.alert('닫기', '닫기 버튼 클릭됨')}
-        >
-          <Text style={{ color: theme.iconColorDefault }}>×</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
@@ -144,11 +180,12 @@ const AuthScreen: React.FC = () => {
               <Text style={styles.socialButtonText}>{isLoading ? '로그인 중...' : 'Google로 계속하기'}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.socialButton, styles.appleButton]}
-              onPress={() => Alert.alert('Apple', '준비 중입니다.')}
+              style={[styles.socialButton, styles.appleButton, isLoading && styles.socialButtonDisabled]}
+              onPress={handleAppleLogin}
+              disabled={isLoading}
             >
               {isLoading ? (
-                <ActivityIndicator size="small" color="#000" style={styles.iconLeft} />
+                <ActivityIndicator size="small" color="#fff" style={styles.iconLeft} />
               ) : (
                 <AppleIcon width={20} height={20} style={styles.iconLeft} />
               )}
