@@ -29,7 +29,9 @@ export const googleAuth = {
 
   async login(): Promise<GoogleLoginResult> {
     try {
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true })
+      if (Platform.OS === 'android') {
+        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true })
+      }
 
       const userInfo: any = await GoogleSignin.signIn()
 
