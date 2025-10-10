@@ -10,6 +10,7 @@ export type UserType = {
   version: number
   kakaoId?: string
   googleId?: string
+  appleId?: string
   mobile?: string
 }
 
