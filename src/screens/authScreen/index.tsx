@@ -107,6 +107,7 @@ const AuthScreen: React.FC = () => {
     if (isLoading) return
 
     const available = await appleAuth.isAvailable()
+
     if (!available) {
       Alert.alert('Apple 로그인', 'Apple 로그인은 실제 iOS 기기에서만 사용 가능합니다.')
       return

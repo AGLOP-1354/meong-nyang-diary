@@ -65,6 +65,8 @@ export const appleAuth = {
         message = '대화형 로그인 요청이 아닙니다.'
       } else if (error.code === 'ERR_REQUEST_UNKNOWN') {
         message = '알 수 없는 오류가 발생했습니다.'
+      } else if (error.message && error.message.includes('unknown reason')) {
+        message = 'Apple 로그인은 실제 iOS 기기에서만 사용 가능합니다. (시뮬레이터 미지원)'
       } else if (error.message) {
         message = error.message
       }
