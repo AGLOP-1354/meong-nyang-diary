@@ -8,7 +8,7 @@ import {
   type KakaoLoginToken,
 } from '@react-native-kakao/user'
 import Constants from 'expo-constants'
-import logger from '../utils/logger'
+import logger from '../libs/utils/logger'
 
 export type KakaoAuthUser = {
   id: number

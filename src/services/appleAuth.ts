@@ -1,7 +1,7 @@
 import * as AppleAuthentication from 'expo-apple-authentication'
 import { Platform } from 'react-native'
 
-import logger from '../utils/logger'
+import logger from '../libs/utils/logger'
 
 export type AppleAuthUser = {
   id: string
