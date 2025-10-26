@@ -2,9 +2,12 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import { UserType, AuthState } from '@/types/user'
+import type { UserType } from '@/types/user'
 
-interface AuthStore extends AuthState {
+interface AuthStore {
+  isAuthenticated: boolean
+  user: UserType | null
+  isLoading: boolean
   login: (user: UserType) => void
   logout: () => void
   setLoading: (isLoading: boolean) => void
@@ -23,7 +26,7 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: true,
           user,
           isLoading: false,
-        })
+        } as Partial<AuthStore>)
       },
 
       logout: () => {
@@ -31,34 +34,35 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: false,
           user: null,
           isLoading: false,
-        })
+        } as Partial<AuthStore>)
       },
 
       setLoading: (isLoading: boolean) => {
-        set({ isLoading })
+        set({ isLoading } as Partial<AuthStore>)
       },
 
       checkAuthStatus: async () => {
         try {
-          set({ isLoading: false })
+          set({ isLoading: false } as Partial<AuthStore>)
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.error('인증 상태 확인 중 오류:', error)
           set({
             isAuthenticated: false,
             user: null,
             isLoading: false,
-          })
+          } as Partial<AuthStore>)
         }
       },
     }),
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: state => ({
+      partialize: (state: AuthStore) => ({
         isAuthenticated: state.isAuthenticated,
         user: state.user,
       }),
-      onRehydrateStorage: () => state => {
+      onRehydrateStorage: () => (state: AuthStore | undefined) => {
         if (state) {
           state.setLoading(false)
         }
