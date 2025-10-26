@@ -4,17 +4,16 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useColorScheme } from 'react-native'
 
 import { useAuthStore } from '@/stores/authStore'
-import { UserType } from '@/types/user'
 import { getThemeByScheme } from '@/constants/theme'
-import { kakaoAuth } from '@/services/kakaoAuth'
-import { googleAuth } from '@/services/googleAuth'
+import { authApi, SocialPlatform } from '@/libs/api/auth'
+import { userApi } from '@/libs/api/user'
 import { appleAuth } from '@/services/appleAuth'
 
 import { createStyles } from './styles'
 
-import KakaoIcon from '../../../assets/logo/kakao-logo.svg'
-import GoogleIcon from '../../../assets/logo/google-logo.svg'
-import AppleIcon from '../../../assets/logo/apple-logo.svg'
+import KakaoIcon from '@assets/logo/kakao-logo.svg'
+import GoogleIcon from '@assets/logo/google-logo.svg'
+import AppleIcon from '@assets/logo/apple-logo.svg'
 
 const AuthScreen: React.FC = () => {
   const login = useAuthStore(s => s.login)
@@ -33,27 +32,21 @@ const AuthScreen: React.FC = () => {
 
     setIsLoading(true)
     try {
-      const res = await kakaoAuth.login()
+      const result = await authApi.kakao.login('app')
 
-      if (res.success && res.user) {
-        const u: UserType = {
-          id: res.user.id,
-          uuid: `kakao-${res.user.id}`,
-          name: res.user.nickname || '카카오 사용자',
-          email: res.user.email || '',
-          profileImage: res.user.profileImageUrl || '',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          lastLoginAt: new Date(),
-          version: 1,
-          kakaoId: String(res.user.id),
-        }
-        login(u)
+      if (!result.success) {
+        Alert.alert('카카오 로그인 실패', result.error || '알 수 없는 오류가 발생했습니다.')
+        return
+      }
+
+      await authApi.saveToken(result.data.accessToken, SocialPlatform.KAKAO)
+
+      const userResult = await userApi.getMe()
+
+      if (userResult.success && userResult.user) {
+        login(userResult.user)
       } else {
-        Alert.alert(
-          '카카오 로그인 실패',
-          'success' in res && !res.success ? res.error : '알 수 없는 오류가 발생했습니다.',
-        )
+        Alert.alert('로그인 오류', '사용자 정보를 가져올 수 없습니다.')
       }
     } catch (error) {
       Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
@@ -72,24 +65,21 @@ const AuthScreen: React.FC = () => {
 
     setIsLoading(true)
     try {
-      const res = await googleAuth.login()
+      const result = await authApi.google.login('app')
 
-      if (res.success && res.user) {
-        const u: UserType = {
-          id: parseInt(res.user.id, 10) || Date.now(),
-          uuid: `google-${res.user.id}`,
-          name: res.user.name || 'Google 사용자',
-          email: res.user.email || '',
-          profileImage: res.user.profileImageUrl || '',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          lastLoginAt: new Date(),
-          version: 1,
-          googleId: res.user.id,
-        }
-        login(u)
+      if (!result.success) {
+        Alert.alert('Google 로그인 실패', result.error || '알 수 없는 오류가 발생했습니다.')
+        return
+      }
+
+      await authApi.saveToken(result.data.accessToken, SocialPlatform.GOOGLE)
+
+      const userResult = await userApi.getMe()
+
+      if (userResult.success && userResult.user) {
+        login(userResult.user)
       } else {
-        Alert.alert('Google 로그인 실패', !res.success ? res.error : '알 수 없는 오류가 발생했습니다.')
+        Alert.alert('로그인 오류', '사용자 정보를 가져올 수 없습니다.')
       }
     } catch (error) {
       Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
@@ -115,24 +105,21 @@ const AuthScreen: React.FC = () => {
 
     setIsLoading(true)
     try {
-      const res = await appleAuth.login()
+      const result = await authApi.apple.login('app')
 
-      if (res.success && res.user) {
-        const u: UserType = {
-          id: parseInt(res.user.id, 10) || Date.now(),
-          uuid: `apple-${res.user.id}`,
-          name: res.user.name || 'Apple 사용자',
-          email: res.user.email || '',
-          profileImage: '',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          lastLoginAt: new Date(),
-          version: 1,
-          appleId: res.user.id,
-        }
-        login(u)
+      if (!result.success) {
+        Alert.alert('Apple 로그인 실패', result.error || '알 수 없는 오류가 발생했습니다.')
+        return
+      }
+
+      await authApi.saveToken(result.data.accessToken, SocialPlatform.APPLE)
+
+      const userResult = await userApi.getMe()
+
+      if (userResult.success && userResult.user) {
+        login(userResult.user)
       } else {
-        Alert.alert('Apple 로그인 실패', !res.success ? res.error : '알 수 없는 오류가 발생했습니다.')
+        Alert.alert('로그인 오류', '사용자 정보를 가져올 수 없습니다.')
       }
     } catch (error) {
       Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
