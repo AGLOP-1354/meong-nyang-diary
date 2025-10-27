@@ -1,7 +1,7 @@
 import { GoogleSignin, statusCodes, type User } from '@react-native-google-signin/google-signin'
 import Constants from 'expo-constants'
 import { Platform } from 'react-native'
-import logger from '../utils/logger'
+import logger from '../libs/utils/logger'
 
 export type GoogleAuthUser = {
   id: string
