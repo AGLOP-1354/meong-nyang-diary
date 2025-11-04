@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Link Dropper",
-    "slug": "link-dropper",
+    "name": "meong-nyang-diary",
+    "slug": "meong-nyang-diary",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,7 +15,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.linkdropper.app",
+      "bundleIdentifier": "com.meong-nyang-diary.app",
       "usesAppleSignIn": true
     },
     "android": {
@@ -24,7 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.linkdropper.app"
+      "package": "com.meong-nyang-diary.app"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -67,7 +67,8 @@
           "iosUrlScheme": "com.googleusercontent.apps.628998903521-uta5j62hjkbqe2auc6j1rq0sot45a76g"
         }
       ],
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "expo-router"
     ],
     "extra": {
       "eas": {

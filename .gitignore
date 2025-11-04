@@ -89,3 +89,7 @@ tmp/
 temp/
 
 .env
+
+# AI
+.claude/
+CLAUDE.md

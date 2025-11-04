@@ -9,19 +9,8 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react-native",
-    "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
-      "@/components/*": ["src/components/*"],
-      "@/screens/*": ["src/screens/*"],
-      "@/hooks/*": ["src/hooks/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/constants/*": ["src/constants/*"],
-      "@/types/*": ["src/types/*"],
-      "@/stores/*": ["src/stores/*"],
-      "@/services/*": ["src/services/*"],
-      "@/libs/*": ["src/libs/*"],
-      "@assets/*": ["assets/*"]
+      "@/*": ["./*"]
     },
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
