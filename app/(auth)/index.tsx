@@ -1,191 +1,242 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, Image, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useColorScheme } from 'react-native';
+/**
+ * 멍냥일기 로그인 화면
+ * PRD & Design System 기반 리디자인
+ */
 
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, Alert, Platform } from 'react-native';
+
+import { useTheme, SafeAreaWrapper, Container, Display, Body, Caption } from '@/design-system';
 import { useAuthStore } from '@/stores/authStore';
-import { getThemeByScheme } from '@/constants/theme';
-import { authApi, SocialPlatform } from '@/libs/api/auth';
-import { userApi } from '@/libs/api/user';
-import { appleAuth } from '@/services/appleAuth';
 
-import { createStyles } from '@/components/auth/authScreenStyles';
-
+import { Logo } from '@/components/common/Logo';
 import KakaoIcon from '@/components/auth/KakaoIcon';
 import GoogleIcon from '@/components/auth/GoogleIcon';
 import AppleIcon from '@/components/auth/AppleIcon';
 
-export default function AuthScreen() {
-  const login = useAuthStore((s) => s.login);
-  const scheme = useColorScheme();
-  const theme = getThemeByScheme(scheme);
-  const styles = createStyles(theme);
-  const [isLoading, setIsLoading] = useState(false);
+export default function LoginScreen() {
+  const { theme } = useTheme();
+  const signInWithOAuth = useAuthStore((s) => s.signInWithOAuth);
 
   const handleKakaoLogin = async () => {
-    if (!login) {
-      Alert.alert('오류', '로그인 핸들러가 초기화되지 않았습니다.');
-      return;
-    }
 
-    if (isLoading) return;
-
-    setIsLoading(true);
     try {
-      const result = await authApi.kakao.login('app');
+      const { error } = await signInWithOAuth('kakao');
 
-      if (!result.success) {
-        Alert.alert('카카오 로그인 실패', result.error || '알 수 없는 오류가 발생했습니다.');
-        return;
+      if (error) {
+        Alert.alert('카카오 로그인 실패', error.message || '알 수 없는 오류가 발생했습니다.');
       }
-
-      await authApi.saveToken(result.data.accessToken, SocialPlatform.KAKAO);
-
-      const userResult = await userApi.getMe();
-
-      if (userResult.success && userResult.user) {
-        login(userResult.user);
-      } else {
-        Alert.alert('로그인 오류', '사용자 정보를 가져올 수 없습니다.');
-      }
+      // 성공 시 자동으로 세션이 설정되고 리다이렉트됨
     } catch (error) {
       Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    if (!login) {
-      Alert.alert('오류', '로그인 핸들러가 초기화되지 않았습니다.');
-      return;
-    }
 
-    if (isLoading) return;
-
-    setIsLoading(true);
     try {
-      const result = await authApi.google.login('app');
+      const { error } = await signInWithOAuth('google');
 
-      if (!result.success) {
-        Alert.alert('Google 로그인 실패', result.error || '알 수 없는 오류가 발생했습니다.');
-        return;
+      if (error) {
+        Alert.alert('Google 로그인 실패', error.message || '알 수 없는 오류가 발생했습니다.');
       }
-
-      await authApi.saveToken(result.data.accessToken, SocialPlatform.GOOGLE);
-
-      const userResult = await userApi.getMe();
-
-      if (userResult.success && userResult.user) {
-        login(userResult.user);
-      } else {
-        Alert.alert('로그인 오류', '사용자 정보를 가져올 수 없습니다.');
-      }
+      // 성공 시 자동으로 세션이 설정되고 리다이렉트됨
     } catch (error) {
       Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleAppleLogin = async () => {
-    if (!login) {
-      Alert.alert('오류', '로그인 핸들러가 초기화되지 않았습니다.');
+    if (Platform.OS !== 'ios') {
+      Alert.alert('Apple 로그인', 'Apple 로그인은 iOS에서만 사용 가능합니다.');
       return;
     }
 
-    if (isLoading) return;
-
-    const available = await appleAuth.isAvailable();
-
-    if (!available) {
-      Alert.alert('Apple 로그인', 'Apple 로그인은 실제 iOS 기기에서만 사용 가능합니다.');
-      return;
-    }
-
-    setIsLoading(true);
     try {
-      const result = await authApi.apple.login('app');
+      const { error } = await signInWithOAuth('apple');
 
-      if (!result.success) {
-        Alert.alert('Apple 로그인 실패', result.error || '알 수 없는 오류가 발생했습니다.');
-        return;
+      if (error) {
+        Alert.alert('Apple 로그인 실패', error.message || '알 수 없는 오류가 발생했습니다.');
       }
-
-      await authApi.saveToken(result.data.accessToken, SocialPlatform.APPLE);
-
-      const userResult = await userApi.getMe();
-
-      if (userResult.success && userResult.user) {
-        login(userResult.user);
-      } else {
-        Alert.alert('로그인 오류', '사용자 정보를 가져올 수 없습니다.');
-      }
+      // 성공 시 자동으로 세션이 설정되고 리다이렉트됨
     } catch (error) {
       Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background.primary,
+    },
+    contentWrapper: {
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+    headerSection: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop: theme.spacing[10],
+    },
+    logoContainer: {
+      width: 140,
+      height: 140,
+      borderRadius: theme.radius.full,
+      backgroundColor: theme.colors.primary[50],
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: theme.spacing[8],
+      ...theme.shadows.lg,
+    },
+    titleContainer: {
+      alignItems: 'center',
+      gap: theme.spacing[2],
+    },
+    appTitle: {
+      marginBottom: theme.spacing[1],
+    },
+    subtitle: {
+      textAlign: 'center',
+      paddingHorizontal: theme.spacing[6],
+      lineHeight: 26,
+    },
+    footerSection: {
+      paddingBottom: theme.spacing[8],
+      paddingHorizontal: theme.spacing[4],
+    },
+    buttonsContainer: {
+      gap: theme.spacing[3],
+      marginBottom: theme.spacing[6],
+    },
+    socialButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 56,
+      paddingVertical: theme.spacing[4],
+      paddingHorizontal: theme.spacing[6],
+      borderRadius: theme.radius.lg,
+      ...theme.shadows.md,
+    },
+    kakaoButton: {
+      backgroundColor: '#FEE500',
+    },
+    googleButton: {
+      backgroundColor: theme.colors.neutral.white,
+      borderWidth: 1.5,
+      borderColor: theme.colors.neutral[300],
+    },
+    appleButton: {
+      backgroundColor: '#000000',
+    },
+    buttonContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing[2],
+    },
+    buttonIcon: {
+      width: 24,
+      height: 24,
+    },
+    buttonText: {
+      fontSize: theme.typography.fontSize.bodyMd,
+      fontWeight: theme.typography.fontWeight.semibold,
+      fontFamily: theme.typography.fontFamily.primary,
+    },
+    kakaoButtonText: {
+      color: '#371C1D',
+    },
+    googleButtonText: {
+      color: theme.colors.neutral[800],
+    },
+    appleButtonText: {
+      color: theme.colors.neutral.white,
+    },
+    termsContainer: {
+      paddingHorizontal: theme.spacing[4],
+    },
+    termsText: {
+      textAlign: 'center',
+      lineHeight: 20,
+    },
+  });
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>로그인</Text>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.main}>
+    <SafeAreaWrapper style={styles.container}>
+      <Container style={styles.contentWrapper}>
+        {/* Header Section */}
+        <View style={styles.headerSection}>
+          <View style={styles.logoContainer}>
+            <Logo size={80} />
+          </View>
           <View style={styles.titleContainer}>
-            <Image source={require('@/assets/logo.png')} style={styles.logoImage} />
-            <Text style={styles.title}>LINK DROPPER</Text>
-            <Text style={styles.subtitle}>대문자 J의 링크 관리 습관</Text>
+            <Display size="lg" weight="bold" color={theme.colors.primary[500]} style={styles.appTitle}>
+              멍냥일기
+            </Display>
+            <Body size="lg" color={theme.colors.neutral[600]} style={styles.subtitle}>
+              우리 집 최애의 매일을 기록해요
+            </Body>
           </View>
-
-          <View style={styles.buttons}>
-            <TouchableOpacity
-              style={[styles.socialButton, styles.kakaoButton, isLoading && styles.socialButtonDisabled]}
-              onPress={handleKakaoLogin}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#000" style={styles.iconLeft} />
-              ) : (
-                <KakaoIcon style={styles.iconLeft} />
-              )}
-              <Text style={styles.socialButtonText}>{isLoading ? '로그인 중...' : '카카오로 계속하기'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.socialButton, styles.googleButton, isLoading && styles.socialButtonDisabled]}
-              onPress={handleGoogleLogin}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#000" style={styles.iconLeft} />
-              ) : (
-                <GoogleIcon style={styles.iconLeft} />
-              )}
-              <Text style={styles.socialButtonText}>{isLoading ? '로그인 중...' : 'Google로 계속하기'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.socialButton, styles.appleButton, isLoading && styles.socialButtonDisabled]}
-              onPress={handleAppleLogin}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#fff" style={styles.iconLeft} />
-              ) : (
-                <AppleIcon style={styles.iconLeft} />
-              )}
-              <Text style={styles.socialButtonText}>{isLoading ? '로그인 중...' : 'Apple로 계속하기'}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.terms}>
-            계속 진행하면 LINK DROPPER 서비스 약관에 동의하고 개인정보처리방침을 읽었음을 인정하는 것으로 간주됩니다.
-          </Text>
         </View>
-      </View>
-    </SafeAreaView>
+
+        {/* Footer Section - Login Buttons */}
+        <View style={styles.footerSection}>
+          <View style={styles.buttonsContainer}>
+            {/* Kakao Login Button */}
+            <TouchableOpacity
+              style={[styles.socialButton, styles.kakaoButton]}
+              onPress={handleKakaoLogin}
+              activeOpacity={0.8}
+            >
+              <View style={styles.buttonContent}>
+                <KakaoIcon style={styles.buttonIcon} />
+                <Text style={[styles.buttonText, styles.kakaoButtonText]}>
+                  카카오로 시작하기
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Google Login Button */}
+            <TouchableOpacity
+              style={[styles.socialButton, styles.googleButton]}
+              onPress={handleGoogleLogin}
+              activeOpacity={0.8}
+            >
+              <View style={styles.buttonContent}>
+                <GoogleIcon style={styles.buttonIcon} />
+                <Text style={[styles.buttonText, styles.googleButtonText]}>
+                  Google로 시작하기
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Apple Login Button (iOS only) */}
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity
+                style={[styles.socialButton, styles.appleButton]}
+                onPress={handleAppleLogin}
+                activeOpacity={0.8}
+              >
+                <View style={styles.buttonContent}>
+                  <AppleIcon style={styles.buttonIcon} />
+                  <Text style={[styles.buttonText, styles.appleButtonText]}>
+                    Apple로 시작하기
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Terms and Conditions */}
+          <View style={styles.termsContainer}>
+            <Caption size="sm" color={theme.colors.neutral[500]} style={styles.termsText}>
+              계속 진행하면 멍냥일기 서비스 약관에 동의하고{'\n'}
+              개인정보처리방침을 읽었음을 인정하는 것으로 간주됩니다.
+            </Caption>
+          </View>
+        </View>
+      </Container>
+    </SafeAreaWrapper>
   );
 }
