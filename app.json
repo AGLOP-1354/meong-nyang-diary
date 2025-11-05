@@ -7,6 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "scheme": "meong-nyang-diary",
     "splash": {
       "image": "./assets/logo.png",
       "resizeMode": "contain",
@@ -15,7 +16,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.meong-nyang-diary.app",
+      "bundleIdentifier": "com.meongnyang.diary",
       "usesAppleSignIn": true
     },
     "android": {
@@ -24,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.meong-nyang-diary.app"
+      "package": "com.meongnyang.diary"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -44,7 +45,7 @@
       [
         "@react-native-kakao/core",
         {
-          "nativeAppKey": "94df8e291872cce816afc78a1857c510",
+          "nativeAppKey": "8ced6882a26c159f35da0f3db7e99309",
           "android": {
             "authCodeHandlerActivity": true
           },
@@ -74,8 +75,8 @@
       "eas": {
         "projectId": "your-project-id-here"
       },
-      "kakaoNativeAppKey": "94df8e291872cce816afc78a1857c510",
-      "kakaoRestApiKey": "d59debb427d6854d32a757a690cf842c",
+      "kakaoNativeAppKey": "8ced6882a26c159f35da0f3db7e99309",
+      "kakaoRestApiKey": "d5916d12cd5c4160cf7b015cebf0e253",
       "googleIosClientId": "628998903521-uta5j62hjkbqe2auc6j1rq0sot45a76g.apps.googleusercontent.com",
       "googleAndroidClientId": "YOUR_ANDROID_CLIENT_ID_HERE",
       "googleWebClientId": "628998903521-9jhj9819r60hr85gnd0nslgj32o61tr4.apps.googleusercontent.com"
